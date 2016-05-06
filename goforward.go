@@ -22,19 +22,17 @@ func forward(conn net.Conn, targetAddress string) {
     if err != nil {
         log.Fatalf("Dial failed: %v", err)
     }
-    log.Printf("Connected to localhost %v\n", conn)
-    go func() {
-        defer client.Close()
-        defer conn.Close()
-        buf := make([]byte, 8192)
-        io.CopyBuffer(client, conn, buf)
-    }()
-    go func() {
-        defer client.Close()
-        defer conn.Close()
-        buf := make([]byte, 8192)
-        io.CopyBuffer(conn, client, buf)
-    }()
+    log.Printf("src: %v, port: %v\n, dest: %v", conn.RemoteAddr(), conn.LocalAddr(), targetAddress)
+
+    go copyBytes(client, conn)
+    go copyBytes(conn, client)
+}
+
+func copyBytes(a net.Conn, b net.Conn){
+    defer a.Close()
+    defer b.Close()
+    buf := make([]byte, 8192)
+    io.CopyBuffer(a, b, buf)
 }
 
 func createPortForward(listenAddress string, targetAddress string){
@@ -50,7 +48,7 @@ func createPortForward(listenAddress string, targetAddress string){
         if err != nil {
             log.Fatalf("ERROR: failed to accept listener: %v", err)
         }
-        log.Printf("Accepted connection %v\n", conn)
+        //log.Printf("Accepted connection %v\n", conn)
         go forward(conn, targetAddress)
     }
 
