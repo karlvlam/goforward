@@ -22,7 +22,7 @@ func forward(conn net.Conn, targetAddress string) {
     if err != nil {
         log.Fatalf("Dial failed: %v", err)
     }
-    log.Println("src: %v, port: %v, dest: %v", conn.RemoteAddr(), 
+    log.Printf("src: %v, port: %v, dest: %v\n", conn.RemoteAddr(),
         conn.LocalAddr(), targetAddress)
 
     go copyBytes(client, conn)
