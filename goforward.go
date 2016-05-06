@@ -22,7 +22,8 @@ func forward(conn net.Conn, targetAddress string) {
     if err != nil {
         log.Fatalf("Dial failed: %v", err)
     }
-    log.Printf("src: %v, port: %v, dest: %v\n", conn.RemoteAddr(), conn.LocalAddr(), targetAddress)
+    log.Println("src: %v, port: %v, dest: %v", conn.RemoteAddr(), 
+        conn.LocalAddr(), targetAddress)
 
     go copyBytes(client, conn)
     go copyBytes(conn, client)
@@ -68,6 +69,7 @@ func main() {
         log.Fatalf("Read file error: %s\n", err)
         return
     }
+    log.Println("Server starts...")
 
     lines := strings.Split(string(raw[:]), "\n")
 
